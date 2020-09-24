@@ -18,6 +18,13 @@ const server = https.createServer(options, app);
 const io = require('socket.io')(server);
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const { PythonShell } = require('python-shell');
+let pyOptions = {
+	scriptPath: __dirname,
+	pythonPath: 'C:\\Users\\yeongeun\\anaconda3\\python.exe',
+	mode: 'text',
+	pythonOptions: ['-u']
+};
 
 // root -> index.html
 const bodyParser = require('body-parser');
@@ -26,6 +33,11 @@ app.use(bodyParser.json());
 
 app.get('/', function(request, response) {
 	response.sendFile(__dirname + '/index.html');
+});
+app.get('/lunch', (request, response) => {
+	PythonShell.run('lunch.py', pyOptions, (err, data) => {
+		response.sendFile(__dirname + '/lunch.html');
+	});
 });
 app.post('/chat', function(request, response) {
 	let password = request.body.password;
